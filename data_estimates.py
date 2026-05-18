@@ -4,7 +4,7 @@ import numpy as np
 YEARS = list(range(2000, 2026))
 
 budget_data = pd.DataFrame({
-    "Annee": YEARS,
+    "Année": YEARS,
     "Contribution brute": [
         15.5, 15.8, 16.2, 16.5, 17.0, 17.3, 17.8, 18.2, 18.5, 18.0,
         19.0, 19.5, 20.0, 20.5, 21.0, 21.3, 21.8, 22.0, 22.5, 23.0,
@@ -36,16 +36,16 @@ for i in range(1, len(YEARS)):
     pib_sans_ue.append(pib_sans_ue[-1] * (1 + (g - penalty) / 100))
 
 pib_data = pd.DataFrame({
-    "Annee": YEARS,
-    "PIB reel": pib_reel,
+    "Année": YEARS,
+    "PIB réel": pib_reel,
     "PIB sans UE": pib_sans_ue,
 })
-pib_data["Gain cumule pct"] = (
-    (pib_data["PIB reel"] / pib_data["PIB sans UE"] - 1) * 100
+pib_data["Gain cumulé pct"] = (
+    (pib_data["PIB réel"] / pib_data["PIB sans UE"] - 1) * 100
 )
 
 ide_data = pd.DataFrame({
-    "Annee": YEARS,
+    "Année": YEARS,
     "IDE totaux": [
         35, 40, 38, 32, 30, 55, 60, 65, 50, 25,
         30, 35, 25, 20, 15, 40, 35, 45, 55, 50,
@@ -61,37 +61,37 @@ ide_data["IDE sans UE"] = ide_data["IDE totaux"] - ide_data["dont intra UE"] * 0
 
 benefices = pd.DataFrame({
     "Canal": [
-        "Marche unique (commerce)", "PAC (retours agricoles)",
+        "Marché unique (commerce)", "PAC (retours agricoles)",
         "Fonds structurels", "Recherche et innovation",
-        "IDE additionnels", "Economie couts emprunt (euro)",
-        "Negociations commerciales", "Erasmus+ et mobilite",
+        "IDE additionnels", "Économie coûts d'emprunt (euro)",
+        "Négociations commerciales", "Erasmus+ et mobilité",
     ],
     "Mds": [90, 9.5, 3.5, 2.8, 12, 25, 8, 0.7],
-    "Categorie": [
+    "Catégorie": [
         "Commerce", "Budget direct", "Budget direct", "Budget direct",
         "Investissement", "Financier", "Commerce", "Capital humain",
     ],
 })
 
 scenarios = pd.DataFrame({
-    "Scenario": [
-        "EEE (Norvege)",
-        "Accord bilateral (Suisse/CETA)",
-        "Sortie complete (OMC)",
+    "Scénario": [
+        "EEE (Norvège)",
+        "Accord bilatéral (Suisse/CETA)",
+        "Sortie complète (OMC)",
     ],
     "PIB pct": [-2.0, -4.5, -7.0],
     "PIB mds": [-54, -122, -189],
     "Emplois k": [-150, -350, -550],
-    "Cout menage": [-750, -1700, -2650],
+    "Coût ménage": [-750, -1700, -2650],
 })
 
 brexit = pd.DataFrame({
-    "Indicateur": ["PIB", "Investissement", "Commerce", "Productivite", "Emploi"],
-    "UK observe": [-6.5, -15, -25, -3.5, -3.5],
+    "Indicateur": ["PIB", "Investissement", "Commerce", "Productivité", "Emploi"],
+    "UK observé": [-6.5, -15, -25, -3.5, -3.5],
     "France projection": [-7.0, -18, -28, -4.0, -4.0],
 })
 
 CONTRIBUTION_NETTE = 10
 BENEFICE_TOTAL = benefices["Mds"].sum()
 RATIO = BENEFICE_TOTAL / CONTRIBUTION_NETTE
-GAIN_PIB = pib_data["Gain cumule pct"].iloc[-1]
+GAIN_PIB = pib_data["Gain cumulé pct"].iloc[-1]
