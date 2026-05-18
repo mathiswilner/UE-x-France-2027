@@ -2,13 +2,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 from styles import C
 
-LAYOUT_BASE = dict(
-    plot_bgcolor="#FFFFFF",
-    paper_bgcolor="#FFFFFF",
-    font=dict(color=C["text"], family="Source Sans Pro, Segoe UI, Helvetica Neue, sans-serif", size=14),
-    margin=dict(l=20, r=40, t=60, b=40),
-)
-
 AXIS_STYLE = dict(
     gridcolor="#EAEAEA",
     linecolor=C["border"],
@@ -16,21 +9,42 @@ AXIS_STYLE = dict(
     zeroline=False,
 )
 
+LAYOUT_COMMON = dict(
+    plot_bgcolor="#FFFFFF",
+    paper_bgcolor="#FFFFFF",
+    font=dict(
+        color=C["text"],
+        family="Source Sans Pro, Segoe UI, Helvetica Neue, sans-serif",
+        size=14,
+    ),
+)
+
 
 def make_fig_benefices(benefices, contribution_nette):
     sorted_data = benefices.sort_values("Mds", ascending=True)
 
-    fig = go.Figure()
+    short_labels = {
+        "Marché unique (commerce)": "Marché unique",
+        "PAC (retours agricoles)": "PAC",
+        "Fonds structurels": "Fonds structurels",
+        "Recherche et innovation": "Recherche",
+        "IDE additionnels": "IDE",
+        "Économie coûts d'emprunt (euro)": "Éco. emprunt (euro)",
+        "Négociations commerciales": "Négoce collectif",
+        "Erasmus+ et mobilité": "Erasmus+",
+    }
+    labels = [short_labels.get(c, c) for c in sorted_data["Canal"]]
 
+    fig = go.Figure()
     fig.add_trace(go.Bar(
-        y=sorted_data["Canal"],
+        y=labels,
         x=sorted_data["Mds"],
         orientation="h",
         marker_color=C["blue"],
         marker_line=dict(width=0),
-        text=[str(round(v, 1)) + " Mds" for v in sorted_data["Mds"]],
+        text=[str(round(v, 1)) for v in sorted_data["Mds"]],
         textposition="outside",
-        textfont=dict(color=C["text"], size=13),
+        textfont=dict(color=C["text"], size=12),
     ))
 
     fig.add_shape(
@@ -43,58 +57,69 @@ def make_fig_benefices(benefices, contribution_nette):
     fig.add_annotation(
         x=contribution_nette,
         y=len(sorted_data) - 0.5,
-        text="Contribution nette : " + str(contribution_nette) + " Mds",
+        text="▼ Contribution nette : " + str(contribution_nette) + " Mds",
         showarrow=False,
-        font=dict(color=C["red"], size=13, family="Source Sans Pro, sans-serif"),
+        font=dict(color=C["red"], size=13),
         xanchor="left",
-        xshift=8,
-        yshift=16,
+        yanchor="bottom",
+        yshift=10,
+        xshift=6,
+        bgcolor="white",
+        bordercolor=C["red"],
+        borderwidth=1,
+        borderpad=4,
     )
 
     fig.update_layout(
-        plot_bgcolor="#FFFFFF",
-        paper_bgcolor="#FFFFFF",
-        font=dict(color=C["text"], family="Source Sans Pro, Segoe UI, Helvetica Neue, sans-serif", size=14),
+        **LAYOUT_COMMON,
         title=dict(
-            text="Benefices annuels de l'UE pour la France (Mds EUR/an)",
-            font=dict(size=18, color=C["text"]),
-            x=0,
-            xanchor="left",
+            text="Bénéfices annuels de l'UE<br>pour la France (Mds EUR/an)",
+            font=dict(size=16, color=C["text"]),
+            x=0, xanchor="left",
         ),
         xaxis=dict(
-            title="Milliards EUR / an",
+            title="Mds EUR / an",
             **AXIS_STYLE,
             range=[0, max(benefices["Mds"]) * 1.15],
         ),
-        yaxis=dict(**AXIS_STYLE, tickfont=dict(size=13)),
-        height=480,
-        margin=dict(l=20, r=80, t=70, b=50),
+        yaxis=dict(**AXIS_STYLE, tickfont=dict(size=12)),
+        height=500,
+        margin=dict(l=120, r=60, t=80, b=50),
         showlegend=False,
     )
     return fig
 
 
 def make_fig_pie(benefices):
+    color_map = {
+        "Commerce": C["blue"],
+        "Financier": C["gold"],
+        "Budget direct": C["green"],
+        "Investissement": C["purple"],
+        "Capital humain": "#5BA4E6",
+    }
     fig = px.pie(
-        benefices, values="Mds", names="Categorie",
-        color_discrete_sequence=[C["blue"], C["gold"], C["green"], C["purple"], C["blue_light"]],
-        hole=0.55,
+        benefices, values="Mds", names="Catégorie",
+        color="Catégorie",
+        color_discrete_map=color_map,
+        hole=0.45,
     )
     fig.update_traces(
         textinfo="label+percent",
-        textfont=dict(size=13, color=C["text"]),
+        textposition="outside",
+        textfont=dict(size=12, color=C["text"]),
         marker=dict(line=dict(color="#FFFFFF", width=2)),
     )
     fig.update_layout(
-        **LAYOUT_BASE,
+        **LAYOUT_COMMON,
         title=dict(
-            text="Repartition par categorie",
+            text="Répartition par catégorie",
             font=dict(size=16, color=C["text"]),
             x=0, xanchor="left",
         ),
-        height=400,
-        showlegend=True,
-        legend=dict(font=dict(size=12)),
+        height=500,
+        margin=dict(l=80, r=80, t=60, b=40),
+        showlegend=False,
     )
     return fig
 
@@ -102,38 +127,34 @@ def make_fig_pie(benefices):
 def make_fig_budget(budget_data):
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=budget_data["Annee"], y=budget_data["Contribution brute"],
+        x=budget_data["Année"], y=budget_data["Contribution brute"],
         name="Contribution brute",
-        marker_color=C["red"],
-        opacity=0.75,
-        marker_line=dict(width=0),
+        marker_color=C["red"], opacity=0.75, marker_line=dict(width=0),
     ))
     fig.add_trace(go.Bar(
-        x=budget_data["Annee"], y=budget_data["Retours directs"],
-        name="Retours directs (PAC, fonds, recherche)",
-        marker_color=C["green"],
-        opacity=0.75,
-        marker_line=dict(width=0),
+        x=budget_data["Année"], y=budget_data["Retours directs"],
+        name="Retours directs",
+        marker_color=C["green"], opacity=0.75, marker_line=dict(width=0),
     ))
     fig.add_trace(go.Scatter(
-        x=budget_data["Annee"], y=budget_data["Contribution nette"],
+        x=budget_data["Année"], y=budget_data["Contribution nette"],
         name="Contribution nette",
-        line=dict(color=C["text"], width=2.5),
-        mode="lines+markers",
-        marker=dict(size=5),
+        line=dict(color=C["text"], width=2.5), mode="lines+markers",
+        marker=dict(size=4),
     ))
     fig.update_layout(
-        **LAYOUT_BASE,
+        **LAYOUT_COMMON,
         title=dict(
-            text="Budget UE : contributions et retours de la France (Mds EUR)",
-            font=dict(size=18, color=C["text"]),
+            text="Budget UE : contributions et<br>retours de la France (Mds EUR)",
+            font=dict(size=16, color=C["text"]),
             x=0, xanchor="left",
         ),
         barmode="group",
-        yaxis=dict(title="Milliards EUR", **AXIS_STYLE),
-        xaxis=dict(**AXIS_STYLE),
-        legend=dict(orientation="h", y=-0.18, font=dict(size=12)),
+        yaxis=dict(title="Mds EUR", **AXIS_STYLE),
+        xaxis=dict(**AXIS_STYLE, dtick=5),
+        legend=dict(orientation="h", y=-0.2, font=dict(size=11)),
         height=450,
+        margin=dict(l=50, r=20, t=70, b=80),
     )
     return fig
 
@@ -142,58 +163,49 @@ def make_fig_pib(pib_data):
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
-        x=list(pib_data["Annee"]) + list(pib_data["Annee"][::-1]),
-        y=list(pib_data["PIB reel"]) + list(pib_data["PIB sans UE"][::-1]),
-        fill="toself",
-        fillcolor="rgba(0,51,153,0.08)",
-        line=dict(width=0),
-        showlegend=False,
-        hoverinfo="skip",
+        x=list(pib_data["Année"]) + list(pib_data["Année"][::-1]),
+        y=list(pib_data["PIB réel"]) + list(pib_data["PIB sans UE"][::-1]),
+        fill="toself", fillcolor="rgba(0,51,153,0.08)",
+        line=dict(width=0), showlegend=False, hoverinfo="skip",
     ))
 
     fig.add_trace(go.Scatter(
-        x=pib_data["Annee"], y=pib_data["PIB reel"],
+        x=pib_data["Année"], y=pib_data["PIB réel"],
         name="France (dans l'UE)",
-        line=dict(color=C["blue"], width=3),
-        mode="lines",
+        line=dict(color=C["blue"], width=3), mode="lines",
     ))
 
     fig.add_trace(go.Scatter(
-        x=pib_data["Annee"], y=pib_data["PIB sans UE"],
+        x=pib_data["Année"], y=pib_data["PIB sans UE"],
         name="Contrefactuel (hors UE)",
-        line=dict(color=C["red"], width=2.5, dash="dash"),
-        mode="lines",
+        line=dict(color=C["red"], width=2.5, dash="dash"), mode="lines",
     ))
 
-    last_year = pib_data["Annee"].iloc[-1]
-    last_reel = pib_data["PIB reel"].iloc[-1]
+    last_reel = pib_data["PIB réel"].iloc[-1]
     last_sans = pib_data["PIB sans UE"].iloc[-1]
     gain = round((last_reel / last_sans - 1) * 100, 1)
 
     fig.add_annotation(
-        x=last_year, y=(last_reel + last_sans) / 2,
-        text="Ecart : +" + str(gain) + "%",
-        showarrow=True,
-        arrowhead=0,
-        arrowcolor=C["blue"],
-        font=dict(size=14, color=C["blue"]),
-        bgcolor="white",
-        bordercolor=C["blue"],
-        borderwidth=1,
-        borderpad=6,
+        x=pib_data["Année"].iloc[-1],
+        y=(last_reel + last_sans) / 2,
+        text="Écart : +" + str(gain) + "%",
+        showarrow=True, arrowhead=0, arrowcolor=C["blue"],
+        font=dict(size=13, color=C["blue"]),
+        bgcolor="white", bordercolor=C["blue"], borderwidth=1, borderpad=4,
     )
 
     fig.update_layout(
-        **LAYOUT_BASE,
+        **LAYOUT_COMMON,
         title=dict(
-            text="PIB France : trajectoire reelle vs contrefactuel hors UE (base 100 = 2000)",
-            font=dict(size=18, color=C["text"]),
+            text="PIB France : trajectoire réelle vs<br>contrefactuel hors UE (base 100)",
+            font=dict(size=16, color=C["text"]),
             x=0, xanchor="left",
         ),
-        yaxis=dict(title="Indice (base 100 en 2000)", **AXIS_STYLE),
-        xaxis=dict(**AXIS_STYLE),
-        legend=dict(orientation="h", y=-0.15, font=dict(size=12)),
+        yaxis=dict(title="Indice (base 100)", **AXIS_STYLE),
+        xaxis=dict(**AXIS_STYLE, dtick=5),
+        legend=dict(orientation="h", y=-0.2, font=dict(size=11)),
         height=450,
+        margin=dict(l=50, r=20, t=70, b=80),
     )
     return fig
 
@@ -202,34 +214,31 @@ def make_fig_ide(ide_data):
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
-        x=ide_data["Annee"], y=ide_data["IDE totaux"],
-        name="IDE reels",
-        fill="tozeroy",
+        x=ide_data["Année"], y=ide_data["IDE totaux"],
+        name="IDE réels", fill="tozeroy",
         fillcolor="rgba(0,51,153,0.1)",
-        line=dict(color=C["blue"], width=2),
-        mode="lines",
+        line=dict(color=C["blue"], width=2), mode="lines",
     ))
 
     fig.add_trace(go.Scatter(
-        x=ide_data["Annee"], y=ide_data["IDE sans UE"],
-        name="IDE estimes hors UE",
-        fill="tozeroy",
+        x=ide_data["Année"], y=ide_data["IDE sans UE"],
+        name="IDE estimés hors UE", fill="tozeroy",
         fillcolor="rgba(192,57,43,0.08)",
-        line=dict(color=C["red"], width=2, dash="dash"),
-        mode="lines",
+        line=dict(color=C["red"], width=2, dash="dash"), mode="lines",
     ))
 
     fig.update_layout(
-        **LAYOUT_BASE,
+        **LAYOUT_COMMON,
         title=dict(
-            text="IDE entrants en France : reel vs contrefactuel hors UE (Mds EUR)",
-            font=dict(size=18, color=C["text"]),
+            text="IDE entrants en France :<br>réel vs contrefactuel hors UE (Mds EUR)",
+            font=dict(size=16, color=C["text"]),
             x=0, xanchor="left",
         ),
-        yaxis=dict(title="Milliards EUR", **AXIS_STYLE),
-        xaxis=dict(**AXIS_STYLE),
-        legend=dict(orientation="h", y=-0.15, font=dict(size=12)),
+        yaxis=dict(title="Mds EUR", **AXIS_STYLE),
+        xaxis=dict(**AXIS_STYLE, dtick=5),
+        legend=dict(orientation="h", y=-0.2, font=dict(size=11)),
         height=450,
+        margin=dict(l=50, r=20, t=70, b=80),
     )
     return fig
 
@@ -238,30 +247,38 @@ def make_fig_scenarios(scenarios):
     fig = go.Figure()
     colors_sc = [C["green"], C["yellow"], C["red"]]
 
+    short_names = {
+        "EEE (Norvège)": "EEE\n(Norvège)",
+        "Accord bilatéral (Suisse/CETA)": "Bilatéral\n(Suisse)",
+        "Sortie complète (OMC)": "Sortie\n(OMC)",
+    }
+
     for i, row in scenarios.iterrows():
+        label = short_names.get(row["Scénario"], row["Scénario"])
         fig.add_trace(go.Bar(
-            x=[row["Scenario"]],
+            x=[label],
             y=[abs(row["PIB mds"])],
-            name=row["Scenario"],
+            name=row["Scénario"],
             marker_color=colors_sc[i],
             marker_line=dict(width=0),
-            text=(str(row["PIB pct"]) + "% du PIB\n"
-                  + str(row["Cout menage"]) + " EUR/menage/an"),
+            text=(str(row["PIB pct"]) + "% PIB\n"
+                  + str(row["Coût ménage"]) + " EUR\n/ménage/an"),
             textposition="inside",
-            textfont=dict(color="white", size=13),
+            textfont=dict(color="white", size=11),
         ))
 
     fig.update_layout(
-        **LAYOUT_BASE,
+        **LAYOUT_COMMON,
         title=dict(
-            text="Cout estime d'un Frexit selon 3 scenarios (impact cumule sur 10 ans)",
-            font=dict(size=18, color=C["text"]),
+            text="Coût estimé d'un Frexit<br>(impact cumulé sur 10 ans)",
+            font=dict(size=16, color=C["text"]),
             x=0, xanchor="left",
         ),
-        yaxis=dict(title="Perte de PIB (Mds EUR)", **AXIS_STYLE),
-        xaxis=dict(**AXIS_STYLE, tickfont=dict(size=12)),
+        yaxis=dict(title="Perte PIB (Mds EUR)", **AXIS_STYLE),
+        xaxis=dict(**AXIS_STYLE, tickfont=dict(size=11)),
         showlegend=False,
         height=450,
+        margin=dict(l=50, r=20, t=70, b=50),
     )
     return fig
 
@@ -270,30 +287,29 @@ def make_fig_brexit(brexit):
     fig = go.Figure()
 
     fig.add_trace(go.Bar(
-        x=brexit["Indicateur"], y=brexit["UK observe"],
-        name="Royaume-Uni (observe, 2025)",
-        marker_color=C["purple"],
-        marker_line=dict(width=0),
+        x=brexit["Indicateur"], y=brexit["UK observé"],
+        name="Royaume-Uni (observé)",
+        marker_color=C["purple"], marker_line=dict(width=0),
     ))
 
     fig.add_trace(go.Bar(
         x=brexit["Indicateur"], y=brexit["France projection"],
-        name="France (projection Frexit, scenario OMC)",
-        marker_color=C["red"],
-        marker_line=dict(width=0),
+        name="France (projection Frexit)",
+        marker_color=C["red"], marker_line=dict(width=0),
     ))
 
     fig.update_layout(
-        **LAYOUT_BASE,
+        **LAYOUT_COMMON,
         title=dict(
-            text="Le miroir du Brexit : impact observe (UK) vs projections (France)",
-            font=dict(size=18, color=C["text"]),
+            text="Le miroir du Brexit :<br>UK observé vs France projection (%)",
+            font=dict(size=16, color=C["text"]),
             x=0, xanchor="left",
         ),
         barmode="group",
         yaxis=dict(title="Impact (%)", **AXIS_STYLE),
-        xaxis=dict(**AXIS_STYLE),
-        legend=dict(orientation="h", y=-0.18, font=dict(size=12)),
+        xaxis=dict(**AXIS_STYLE, tickfont=dict(size=12)),
+        legend=dict(orientation="h", y=-0.2, font=dict(size=11)),
         height=450,
+        margin=dict(l=50, r=20, t=70, b=80),
     )
     return fig
