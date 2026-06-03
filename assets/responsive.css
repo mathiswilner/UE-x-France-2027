@@ -34,3 +34,21 @@ a:hover {
         font-size: 2em !important;
     }
 }
+
+/* ===== DETAILS/SUMMARY (idees recues) ===== */
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details summary::marker {
+    display: none;
+    content: "";
+}
+
+details summary:hover {
+    background-color: #F6F6F6;
+}
+
+details[open] summary {
+    border-bottom: none;
+}
