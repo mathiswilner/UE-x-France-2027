@@ -3,7 +3,6 @@ from dash import html, dcc, callback, Input, Output, State
 C_BLEU = "#000091"
 C_WHITE = "#FFFFFF"
 C_RED = "#E1000F"
-C_BORDER = "#DDDDDD"
 
 LINKS = [
     {"label": "Accueil", "href": "/"},
@@ -26,6 +25,9 @@ def create_navbar():
             "borderBottom": "4px solid " + C_RED,
         },
         children=[
+            # Stocke l'état ouvert/fermé
+            dcc.Store(id="menu-open", data=False),
+
             html.Div(
                 style={
                     "maxWidth": "1200px",
@@ -84,7 +86,7 @@ def create_navbar():
                         ],
                     ),
 
-                    # Bouton hamburger (mobile)
+                    # Bouton hamburger
                     html.Button(
                         id="hamburger-btn",
                         n_clicks=0,
@@ -116,7 +118,7 @@ def create_navbar():
                 ],
             ),
 
-            # Menu mobile (caché par défaut)
+            # Menu mobile
             html.Div(
                 id="mobile-menu",
                 style={"display": "none"},
@@ -146,17 +148,30 @@ def create_navbar():
                     ),
                 ],
             ),
+
+            # Écoute les changements d'URL
+            dcc.Location(id="url-listener", refresh=False),
         ],
     )
 
 
 @callback(
     Output("mobile-menu", "style"),
+    Output("menu-open", "data"),
     Input("hamburger-btn", "n_clicks"),
-    State("mobile-menu", "style"),
+    Input("url-listener", "pathname"),
+    State("menu-open", "data"),
     prevent_initial_call=True,
 )
-def toggle_mobile_menu(n_clicks, current_style):
-    if current_style.get("display") == "none":
-        return {"display": "block"}
-    return {"display": "none"}
+def toggle_mobile_menu(n_clicks, pathname, is_open):
+    from dash import ctx
+    trigger = ctx.triggered_id
+
+    # Si c'est l'URL qui a changé, on ferme le menu
+    if trigger == "url-listener":
+        return {"display": "none"}, False
+
+    # Si c'est le bouton hamburger, on toggle
+    if is_open:
+        return {"display": "none"}, False
+    return {"display": "block"}, True
