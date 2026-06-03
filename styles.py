@@ -1,46 +1,66 @@
-#Ceci est un test#
+# =============================================================================
+# IDENTITÉ VISUELLE — LE PRIX DU FREXIT
+# Inspiré du Système de Design de l'État français (DSFR)
+# =============================================================================
 
 C = {
+    # Fonds
     "bg": "#FFFFFF",
-    "card": "#FFFFFF",
-    "card_alt": "#F7F8FA",
-    "text": "#1A1A2E",
-    "text_secondary": "#4A4A68",
-    "blue": "#003399",
-    "blue_light": "#4A7CC9",
-    "green": "#1A7A3A",
-    "red": "#C0392B",
-    "yellow": "#D4A017",
-    "purple": "#5B2C8E",
-    "gold": "#CFAB00",
-    "border": "#D6D8DC",
-    "muted": "#6B6B80",
-    "accent": "#003399",
+    "bg_alt": "#F6F6F6",
+    "bg_dark": "#1B1B35",
+
+    # Texte
+    "text": "#1B1B35",
+    "text_secondary": "#666666",
+    "text_light": "#FFFFFF",
+
+    # Accents
+    "bleu_france": "#000091",
+    "rouge_marianne": "#E1000F",
+    "vert": "#18753C",
+    "or": "#D4A017",
+
+    # Utilitaires
+    "border": "#DDDDDD",
+    "border_strong": "#000091",
+    "muted": "#929292",
+    "highlight": "#F5F5FE",
 }
 
+# Police
+FONT = "'Source Sans 3', 'Source Sans Pro', 'Segoe UI', 'Helvetica Neue', sans-serif"
+
+# Pas d'ombres, coins droits, esprit gouvernemental
 CARD = {
-    "backgroundColor": C["card"],
-    "borderRadius": "8px",
+    "backgroundColor": C["bg"],
+    "borderRadius": "2px",
     "padding": "24px",
     "marginBottom": "20px",
     "border": "1px solid " + C["border"],
 }
 
-KPI = {
-    "backgroundColor": C["card_alt"],
-    "borderRadius": "8px",
-    "padding": "20px",
-    "textAlign": "center",
-    "border": "1px solid " + C["border"],
-    "flex": "1",
-    "minWidth": "200px",
+CARD_HIGHLIGHT = {
+    "backgroundColor": C["highlight"],
+    "borderRadius": "2px",
+    "padding": "24px",
+    "marginBottom": "20px",
+    "borderLeft": "4px solid " + C["bleu_france"],
 }
 
-PAGE = {
-    "backgroundColor": C["bg"],
-    "minHeight": "100vh",
-    "padding": "30px 5%",
-    "fontFamily": "'Source Sans Pro', 'Segoe UI', 'Helvetica Neue', sans-serif",
+CARD_ALERT = {
+    "backgroundColor": "#FEF4F4",
+    "borderRadius": "2px",
+    "padding": "24px",
+    "marginBottom": "20px",
+    "borderLeft": "4px solid " + C["rouge_marianne"],
+}
+
+CARD_SUCCESS = {
+    "backgroundColor": "#F5FBF8",
+    "borderRadius": "2px",
+    "padding": "24px",
+    "marginBottom": "20px",
+    "borderLeft": "4px solid " + C["vert"],
 }
 
 GC = {"displayModeBar": False}

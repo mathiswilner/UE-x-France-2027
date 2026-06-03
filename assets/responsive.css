@@ -1,61 +1,36 @@
-/* ===== MOBILE RESPONSIVE ===== */
+/* ===== GOOGLE FONT ===== */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap');
 
-/* Sur écrans < 768px (tablettes et téléphones) */
+/* ===== GLOBAL ===== */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Source Sans 3', 'Source Sans Pro', 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+a:hover {
+    opacity: 0.85;
+}
+
+/* ===== NAVBAR LINKS HOVER ===== */
+.nav-links-desktop a:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ===== MOBILE ===== */
 @media screen and (max-width: 768px) {
-
-    /* Réduire le padding général */
-    body {
-        padding: 0 !important;
+    .nav-links-desktop {
+        display: none !important;
     }
 
-    /* KPIs : empiler verticalement */
-    .kpi-row {
-        flex-direction: column !important;
-    }
-
-    /* Sections côte à côte : empiler verticalement */
-    .flex-row {
-        flex-direction: column !important;
-    }
-
-    /* Graphiques : prendre toute la largeur */
-    .graph-card {
-        min-width: 100% !important;
-        flex: none !important;
-    }
-
-    /* Réduire les marges */
     .page-container {
         padding: 16px 4% !important;
     }
-
-    /* Titres plus petits */
-    .main-title {
-        font-size: 1.5em !important;
-    }
-
-    .section-title {
-        font-size: 1.2em !important;
-    }
-
-    /* Scénarios : empiler */
-    .scenario-cards {
-        flex-direction: column !important;
-    }
 }
 
-/* Sur écrans < 480px (petits téléphones) */
 @media screen and (max-width: 480px) {
-
-    .main-title {
-        font-size: 1.3em !important;
-    }
-
-    .kpi-value {
-        font-size: 1.2em !important;
-    }
-
-    .page-container {
-        padding: 12px 3% !important;
+    h1 {
+        font-size: 2em !important;
     }
 }
