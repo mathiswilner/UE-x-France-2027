@@ -31,8 +31,7 @@ IDEES = [
             {
                 "type": "analogie",
                 "text": (
-                    "C'est comme dire que votre abonnement de métro vous coûte 85 euros par mois "
-                    "en oubliant qu'il vous permet d'aller travailler et de gagner 2 000 euros."
+                    "C'est comme juger le coût de votre connexion internet (30 euros/mois) sans compter tout ce qu'elle vous permet de faire : travailler, étudier, communiquer, vous divertir."
                 ),
             },
             {
