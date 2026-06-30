@@ -32,7 +32,7 @@ IDEES = [
                 "type": "analogie",
                 "text": (
                     "C'est comme dire que votre abonnement de métro vous coûte 85 euros par mois "
-                    "en oubliant qu'il vous permet d'aller travailler et de gagner 3 000 euros."
+                    "en oubliant qu'il vous permet d'aller travailler et de gagner 2 000 euros."
                 ),
             },
             {
